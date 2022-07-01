@@ -1,69 +1,100 @@
 import pandas as pd
 import numpy as np
-import categories as cat
 import matplotlib.pyplot as plt
 from matplotlib.patches import ConnectionPatch
-
-# Defining an empty list to hold strings that represent file locations
-weeks_files = []
-
-# For Loop to create strings that represent the file location of exported .csv files from Notion
-for x in range(2, 14):
-    file = "weeks_data/week" + str(x) + ".csv"
-    weeks_files.append(file)
-
-# Defining an empty list to hold strings that represent military time
-military_time = []
-
-# For Loop that creates 15 minute military times formatted as a string
-for x in range(0, 96):
-    count = x * 15
-    minutes_i = count % 60
-    minutes = str(minutes_i)
-    hours = str(int((count - minutes_i)/60))
-    if (len(minutes) == 1):
-        minutes = minutes + "0"
-    if len(hours) == 1:
-        hours = "0" + hours
-    time = hours + ":" + minutes
-    military_time.append(time)
-
-# Spliting an concatinating the military time list to start at "06:00"
-begin = military_time[24:]
-end = military_time[0:24]
-military_time = begin + end
-
-# Dictionary to tranlate Notion hyperlinks to classes    , "https://www.notion.so/299bad6882c54c4bbd95377c6f09c360": "PIKE"
+import jsonRW
+import extra
 
 
-# Defining various string lists to certain days out of the .csv files
-week = ["Monday", "Tuesday", "Wednesday",
-        "Thursday", "Friday", "Saturday", "Sunday"]
-weekdays = ["Monday", "Tuesday", "Wednesday",
-            "Thursday", "Friday"]
-weekend = ["Saturday", "Sunday"]
 
-# Defining an empty list to hold Pandas Dataframe of the previously mentioned Notion .csv files
-weeks_df = []
+class Weeks:
 
-# For Loop to create, and clean multipe Dataframes to represent a week
-for x in range(2, 14):
-    df = pd.read_csv(weeks_files[x-2])
-    time = pd.DataFrame(military_time)
-    df = df.drop(df.columns[[0]], axis=1)
-    df = pd.concat([time, df], axis=1)
-    df.set_index([0])
-    df.replace(classes)
-    weeks_df.append(df.fillna("Unknown"))
+    def __init__(self, folder):
+        self.folder = folder
 
-empty_week = pd.DataFrame({"Time": military_time,
-                           "Monday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
-                           "Tuesday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
-                           "Wednesday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
-                           "Thursday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
-                           "Friday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
-                           "Saturday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
-                           "Sunday": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]})
+        # Defining json to hold Weeks data
+        json = jsonRW.read_json(folder)
+        
+        # Defining an empty list to hold strings that represent file locations
+        weeks_files = []
+
+        # For Loop to create strings that represent the file location of exported .csv files from Notion
+        for x in range(1, 16):
+            try:
+                file = f"../weeks_data/{folder}/Week{str(x)}.csv"
+                weeks_files.append(file)
+            except:
+                continue
+
+        # Defining an empty list to hold Pandas Dataframe of the previously mentioned Notion .csv files
+        self.weeks_df = []
+
+        # For Loop to create, and clean multipe Dataframes to represent a week
+        for x in range(15):
+            try:
+                df = pd.read_csv(weeks_files[x])
+                time = pd.DataFrame(extra.military_time())
+                df = df.drop(df.columns[[0]], axis=1)
+                df = pd.concat([time, df], axis=1)
+                df.set_index([0])
+                df.replace(jsonRW.read_class_link(folder))
+                self.weeks_df.append(df.fillna("Unknown"))
+            except:
+                continue
+
+    def create_actions(self):
+
+        # Defining an empty dictionary to file actions as keys and the number of times an action occured as its value (an action is an entry into a 15 minute block)
+        actions = {}
+
+        # Three Nested For Loops to collect all action in a day, for each day, for each week
+        for x in self.weeks_df:
+            for y in extra.week:
+                for z in x[y]:
+                    if actions.get(z) != None:
+                        actions.update({z: (actions.get(z) + 1)})
+                    else:
+                        actions.update({z: 1})
+
+        # Cleaning dictionary keys to translate from Notion hyperlinks to actual classes
+        classes = jsonRW.read_class_link(self.folder)
+        for x in classes:
+            num = actions.get(x)
+            actions.pop(x)
+            act = classes.get(x)
+            actions.update({act: num})
+
+        total_actions = 0
+        for x in actions:
+            total_actions = total_actions + actions.get(x)
+
+        analysis = {"actions":actions, "total_actions":total_actions}
+        jsonRW.write_analysis(self.folder, analysis)
+
+    # I/O Function to do Level One classification
+    def level_one(self):
+        print("Level One Classification \n Type: s for Sleep, w for Work, l for Life, or f for Food")
+        # Level One: Classifying actions into three categories: Sleep, Work, Life, Food
+        sleep = []
+        work = []
+        life = []
+        food = []
+        dict = jsonRW.read_json(self.folder)
+        for x in dict['analysis']['actions']:
+            print("Action to categorize: " + x)
+            l1_cat = input("Classification: ")
+            if l1_cat in ["s", "w", "l", "f"]:
+                if l1_cat == "s":
+                    sleep.append(x)
+                if l1_cat == "w":
+                    work.append(x)
+                if l1_cat == "l":
+                    life.append(x)
+                if l1_cat == "f":
+                    food.append(x)
+        level_one = {"sleep":sleep, "work":work, "life":life, "food":food}
+        jsonRW.write_level(self.folder, "level_one", level_one)
+        
 
 
 # [average_week(weeks_list)] returns a Pandas DataFrame of an 'average' week in which each time entry for each day is a list of all the actions done at that time, on that day through all
@@ -72,7 +103,7 @@ empty_week = pd.DataFrame({"Time": military_time,
 
 def average_week(weeks_list, empty):
     for x in weeks_list:
-        for y in week:
+        for y in extra.week:
             for z in range(0, 96):
                 value = x.loc[z, y]
                 (empty.loc[z, y]).append(value)
@@ -86,7 +117,7 @@ def average_week(weeks_list, empty):
 
 def average_week_cat(weeks_list, empty, cat_dict):
     for x in weeks_list:
-        for y in week:
+        for y in extra.week:
             for z in range(0, 96):
                 value = x.loc[z, y]
                 for w in cat_dict:
@@ -94,71 +125,6 @@ def average_week_cat(weeks_list, empty, cat_dict):
                         value = w
                 (empty.loc[z, y]).append(value)
     return(empty)
-
-
-# Defining an empty dictionary to file actions as keys and the number of times an action occured as its value (an action is an entry into a 15 minute block)
-actions = {}
-
-# Three Nested For Loops to collect all action in a day, for each day, for each week
-for x in weeks_df:
-    for y in week:
-        for z in x[y]:
-            if actions.get(z) != None:
-                actions.update({z: (actions.get(z) + 1)})
-            else:
-                actions.update({z: 1})
-
-# Cleaning dictionary keys to translate from Notion hyperlinks to actual classes
-for x in classes:
-    num = actions.get(x)
-    actions.pop(x)
-    act = classes.get(x)
-    actions.update({act: num})
-
-total = 0
-for x in actions:
-    total = total + actions.get(x)
-
-
-"""
-avg_week = average_week_cat(weeks_df, empty_week, {
-                            'sleep': cat.s, 'work': cat.w, 'life': cat.l, 'food': cat.f})
-
-for y in week:
-    input("Wait")
-    print(y)
-    for z in range(0, 96):
-        time = avg_week.loc[z, 'Time']
-        action_list = avg_week.loc[z, y]
-        print(time)
-        print(action_list)
-"""
-
-
-# I/O Function to do Level One classification
-def level_one():
-    print("Level One Classification \n Type: s for Sleep, w for Work, l for Life, or f for Food")
-    # Level One: Classifying actions into three categories: Sleep, Work, Life, Food
-    sleep = []
-    work = []
-    life = []
-    food = []
-    for x in actions:
-        print("Action to categorize: " + x)
-        l1_cat = input("Classification: ")
-        if l1_cat in ["s", "w", "l", "f"]:
-            if l1_cat == "s":
-                sleep.append(x)
-            if l1_cat == "w":
-                work.append(x)
-            if l1_cat == "l":
-                life.append(x)
-            if l1_cat == "f":
-                food.append(x)
-    print(sleep)
-    print(work)
-    print(life)
-    print(food)
 
 # I/O Function to do Level Two classification
 
