@@ -9,7 +9,7 @@ import extra
 
 class Weeks:
 
-    def __init__(self, folder):
+    def populate(self, folder):
         self.folder = folder
 
         # Defining json to hold Weeks data
@@ -94,7 +94,32 @@ class Weeks:
                     food.append(x)
         level_one = {"sleep":sleep, "work":work, "life":life, "food":food}
         jsonRW.write_level(self.folder, "level_one", level_one)
+
+    # I/O Function to do Level Two classification
+    def level_two(self, type):
+        print(f"Level Two Classification: {type} \n When given an action, type category for it to be filed as.")
+        dict = jsonRW.read_json(self.folder)
+        action_class = {}
+        for x in dict['classification']['level_one'][type]:
+            print("Action to classify: " + x)
+            keys = action_class.keys()
+            classification = input(f"Classification: Pick from {keys}: ")
+            if action_class.get(classification) != None:
+                count = action_class.get(classification)
+                count.append(x)
+                action_class.update({classification: count})
+            else:
+                actions_list = [x]
+                action_class[classification] = actions_list
+        level_two = {type:action_class}
+        jsonRW.write_level(self.folder, "level_two", level_two)
+
+    def anaylsis_one(self):
+
+        dict = jsonRW.read_json(self.folder)
+        actions = dict['analysis']['actions']
         
+            
 
 
 # [average_week(weeks_list)] returns a Pandas DataFrame of an 'average' week in which each time entry for each day is a list of all the actions done at that time, on that day through all
@@ -126,75 +151,12 @@ def average_week_cat(weeks_list, empty, cat_dict):
                 (empty.loc[z, y]).append(value)
     return(empty)
 
-# I/O Function to do Level Two classification
 
 
-def level_two_work(w_list):
-    print("Level Two Classification \n For Work: 3610 for AEP 3610, 3330 for AEP 3330, 3110 for CS 3110, 3112 for GOVT 3112, 3281 for LAW 3281, pp for Purple Pill, 4200 for AEP 4200, pi for PIKE, gen for General")
-    aep3610 = []
-    aep3330 = []
-    cs3110 = []
-    govt3112 = []
-    law3281 = []
-    pp = []
-    aep4200 = []
-    pike = []
-    general = []
-    no_cat = []
-    for x in w_list:
-        print("Action to categorize: " + x)
-        cat = input("Classification: ")
-        if cat in ["3610", "3330", "3110", "3112", "3281", "pp", "4200", "pi", "gen"]:
-            if cat == "3610":
-                aep3610.append(x)
-            if cat == "3330":
-                aep3330.append(x)
-            if cat == "3110":
-                cs3110.append(x)
-            if cat == "3112":
-                govt3112.append(x)
-            if cat == "3281":
-                law3281.append(x)
-            if cat == "pp":
-                pp.append(x)
-            if cat == "4200":
-                aep4200.append(x)
-            if cat == "pi":
-                pike.append(x)
-            if cat == "gen":
-                general.append(x)
-        else:
-            no_cat.append(x)
-    print(aep3610)
-    print(aep3330)
-    print(cs3110)
-    print(govt3112)
-    print(law3281)
-    print(pp)
-    print(aep4200)
-    print(pike)
-    print(general)
-    print(no_cat)
-
-# Level Two Classification for Life
 
 
-def level_two_life(l_list):
-    print("Level Two Classification \n When given an action, type category for it to be filed as.")
-    act_cat = {}
-    for x in l_list:
-        print("Action to categorize: " + x)
-        cat = input("Classification: ")
-        if act_cat.get(cat) != None:
-            count = act_cat.get(cat)
-            count.append(x)
-            act_cat.update({cat: count})
-        else:
-            actions_list = [x]
-            act_cat[cat] = actions_list
 
-    print(act_cat)
-    return(act_cat)
+
 
 
 def count_actions(list_list):
