@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import ConnectionPatch
 import jsonRW
 import extra
+from datetime import datetime
 
 
 
@@ -114,11 +115,148 @@ class Weeks:
         level_two = {type:action_class}
         jsonRW.write_level(self.folder, "level_two", level_two)
 
-    def anaylsis_one(self):
+    # I/O Function to do Level Three Classification
+    def level_three(self):
+        print("Level Three Classification")
+        dict = jsonRW.read_json(self.folder)
+        level_two_work = dict['classification']['level_two']['work']
+        work = {}
+        for x in list(level_two_work.keys()):
+            l3 = {}
+            print(f"\nClassification for {x}")
+            for y in level_two_work[x]:
+                print(f"\n\tAction to classify: {y}\n")
+                classification = input("\t\tClassification: pick from 'lecture', 'studying', or 'assignments': ")
+                if (classification == 'pass'):
+                    break
+                elif l3.get(classification) != None:
+                    count = l3.get(classification)
+                    count.append(y)
+                    l3.update({classification: count})
+                else:
+                    actions_list = [y]
+                    l3[classification] = actions_list
+            work[x] = l3
+        level_three = {"work": work}
+        jsonRW.write_level(self.folder, "level_three", level_three)
 
+
+    def analysis_one(self):
         dict = jsonRW.read_json(self.folder)
         actions = dict['analysis']['actions']
+        level_one = dict['classification']['level_one']
+        text = []
+        data = []
+        time = []
+        duration = datetime.strptime(dict['metadata']['date_end'], r'%m/%d/%Y') - datetime.strptime(dict['metadata']['date_start'], r'%m/%d/%Y')
+        num_weeks = duration.total_seconds() / 604800
+        for classify in list(level_one.keys()):
+            count = 0
+            for block in level_one[classify]:
+                count += actions.get(block)
+            text.append(f"{count} of {classify}")
+            data.append(count)
+            time.append(f"{int(count // (4*7*num_weeks))} hours, {int(((count % (4*7*num_weeks))/(4*7*num_weeks))*(60))} minutes of {classify}")
+        analysis = {"day": {"text": text, "data": data, "time": time}}
+        jsonRW.write_analysis(self.folder, analysis)
+
+    def analysis_two(self):
+        dict = jsonRW.read_json(self.folder)
+        actions = dict['analysis']['actions']
+        level_two = dict['classification']['level_two']
+        for worl in list(level_two.keys()):
+            text = []
+            data = []
+            time = []
+            level_classes = level_two.get(worl)
+            for classify in list(level_classes.keys()):
+                count = 0
+                for block in level_classes[classify]:
+                    count += actions.get(block)
+                text.append(f"{count} of {classify}")
+                data.append(count)
+                time.append(f"{int(count // (4))} hours, {int(((count % (4))/(4))*(60))} minutes of {classify}")
+            analysis = {worl: {"text": text, "data": data, "time": time}}
+            jsonRW.write_analysis(self.folder, analysis)
         
+    def analysis_three(self):
+        dict = jsonRW.read_json(self.folder)
+        actions = dict['analysis']['actions']
+        level_three = dict['classification']['level_three']['work'] # this is currently hard-coded
+        for lect in list(level_three.keys()):
+            text = []
+            data = []
+            time = []
+            lect_split = level_three[lect]
+            for split in list(lect_split.keys()):
+                count = 0
+                for block in lect_split[split]:
+                    count += actions.get(block)
+                text.append(f"{count} of {split}")
+                data.append(count)
+                time.append(f"{int(count // (4))} hours, {int(((count % (4))/(4))*(60))} minutes of {split}")
+            analysis = {lect: {"text": text, "data": data, "time": time}}
+            jsonRW.write_analysis(self.folder, analysis)
+
+    # [anno_pie(data, legend, title) produces a pie chart with a legend.  The pie chart percentages are based off of the numbers in [data].  [data]
+    #   is a list of the number of hours spent on an action.  [legend] is a list of strings mapping the action hours to an action.  [title] is the
+    #   title of the pie chart given as a string.]
+    def anno_pie(self, data, legend, title):
+
+        fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
+
+        data = data
+        legend = legend
+
+        def func(pct, allvals):
+            absolute = int(np.round(pct/100.*np.sum(allvals)))
+            return "{:.1f}%\n({:d} hours)".format(pct, absolute)
+
+        wedges, text, autotexts = ax.pie(
+            data, autopct=lambda pct: func(pct, data), textprops=dict(color="w"))
+
+        ax.legend(wedges, legend, title="Categories",
+                loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+
+        plt.setp(autotexts, size=8, weight="bold")
+        ax.set_title(title)
+
+        plt.show()
+
+    # [anno_donut_plot(data, anno, title) will create a donut pie chart using data for percentages, anno for the annotations, and title for the plot title]
+    def anno_donut_plot(self, data, anno, title):
+        fig, ax = plt.subplots(figsize=(8, 3), subplot_kw=dict(aspect="equal"))
+
+        wedges, texts = ax.pie(data, wedgeprops=dict(width=0.5), startangle=-40)
+
+        bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
+        kw = dict(arrowprops=dict(arrowstyle="-"),
+                bbox=bbox_props, zorder=0, va="center")
+
+        for i, p in enumerate(wedges):
+            ang = (p.theta2 - p.theta1)/2. + p.theta1
+            y = np.sin(np.deg2rad(ang))
+            x = np.cos(np.deg2rad(ang))
+            horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
+            connectionstyle = "angle,angleA=0,angleB={}".format(ang)
+            kw["arrowprops"].update({"connectionstyle": connectionstyle})
+            ax.annotate(anno[i], xy=(x, y), xytext=(
+                1.35*np.sign(x), 1.4*y), horizontalalignment=horizontalalignment, **kw)
+
+        ax.set_title(title, pad=40.0)
+        plt.show()
+
+
+
+    def bake_basic_pie(self):
+        dict = jsonRW.read_json(self.folder)
+        analysis = dict['analysis'] 
+        for x in list(analysis.keys())[2:]:  # hard-coded to skip over 'actions' and 'total_actions'
+            dict_data = analysis[x]
+            title = dict['metadata']['title'] + ': ' + str(x).upper()
+            self.anno_donut_plot(dict_data['data'], dict_data['time'], title)
+
+
             
 
 
@@ -150,87 +288,6 @@ def average_week_cat(weeks_list, empty, cat_dict):
                         value = w
                 (empty.loc[z, y]).append(value)
     return(empty)
-
-
-
-
-
-
-
-
-
-def count_actions(list_list):
-    for x in list_list:
-        num = 0
-        for y in x:
-            n = actions.get(y)
-            # actions.pop(y)
-            if n == None:
-                print(y)
-            else:
-                num = num + n
-        print(num)
-
-
-def type_data(list):
-    data = []
-    for x in list:
-        dat = input("Give type of " + x + ": ")
-        data.append(dat)
-    print(data)
-
-# [anno_pie(data, legend, title) produces a pie chart with a legend.  The pie chart percentages are based off of the numbers in [data].  [data]
-#   is a list of the number of hours spent on an action.  [legend] is a list of strings mapping the action hours to an action.  [title] is the
-#   title of the pie chart given as a string.]
-
-
-def anno_pie(data, legend, title):
-
-    fig, ax = plt.subplots(figsize=(6, 3), subplot_kw=dict(aspect="equal"))
-
-    data = data
-    legend = legend
-
-    def func(pct, allvals):
-        absolute = int(np.round(pct/100.*np.sum(allvals)))
-        return "{:.1f}%\n({:d} hours)".format(pct, absolute)
-
-    wedges, text, autotexts = ax.pie(
-        data, autopct=lambda pct: func(pct, data), textprops=dict(color="w"))
-
-    ax.legend(wedges, legend, title="Categories",
-              loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
-
-    plt.setp(autotexts, size=8, weight="bold")
-    ax.set_title(title)
-
-    plt.show()
-
-
-# [anno_donut_plot(data, anno, title) will create a donut pie chart using data for percentages, anno for the annotations, and title for the plot title]
-
-
-def anno_donut_plot(data, anno, title):
-    fig, ax = plt.subplots(figsize=(8, 3), subplot_kw=dict(aspect="equal"))
-
-    wedges, texts = ax.pie(data, wedgeprops=dict(width=0.5), startangle=-40)
-
-    bbox_props = dict(boxstyle="square,pad=0.3", fc="w", ec="k", lw=0.72)
-    kw = dict(arrowprops=dict(arrowstyle="-"),
-              bbox=bbox_props, zorder=0, va="center")
-
-    for i, p in enumerate(wedges):
-        ang = (p.theta2 - p.theta1)/2. + p.theta1
-        y = np.sin(np.deg2rad(ang))
-        x = np.cos(np.deg2rad(ang))
-        horizontalalignment = {-1: "right", 1: "left"}[int(np.sign(x))]
-        connectionstyle = "angle,angleA=0,angleB={}".format(ang)
-        kw["arrowprops"].update({"connectionstyle": connectionstyle})
-        ax.annotate(anno[i], xy=(x, y), xytext=(
-            1.35*np.sign(x), 1.4*y), horizontalalignment=horizontalalignment, **kw)
-
-    ax.set_title(title, pad=40.0)
-    plt.show()
 
 
 # [bar_of_pie(pie_data, pie_anno, explode, pie_title, bar_data, bar_title, bar_legend)] returns a plot of a pie and bar chart.  [pie_data] is a list of numbers to create the
