@@ -16,7 +16,7 @@ As was natural to my work process, I decided to look at my life a week at a time
 * Daily To-Do list
 * Time Schedule
 
-![The global assignment database houses all assignments that need to be completed throughout the semester. Each assignment has an associated name, class, due date, type, weekday, and status. Assignments are sorted by due date and status to push assignments that have upcoming due dates that have not yet been completed. This table-view of the database is present in all Week pages.](Notion_Assignments.png "Global Assignment Database")
+![The global assignment database houses all assignments that need to be completed throughout the semester. Each assignment has an associated name, class, due date, type, weekday, and status. Assignments are sorted by due date and status to push assignments that have upcoming due dates that have not yet been completed. This table-view of the database is present in all Week pages.](./figures/readMe/Notion_Assignments.png "Global Assignment Database")
 
 
 ## Source Code
