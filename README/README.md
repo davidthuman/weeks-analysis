@@ -8,7 +8,7 @@ Most people at least flirt with the idea of creating a planner, schedule, or to-
 
 My first prototype to keep myself organized was a simple to-do list during finals week.
 
-![My Planning Prototype was a simple whiteboard with my classes weekly homework due days, my prelim schedule, and a section for tracking my workouts.](/prototype.png "Planning Prototype")
+![My Planning Prototype was a simple whiteboard with my classes weekly homework due days, my prelim schedule, and a section for tracking my workouts.](./prototype.png "Planning Prototype")
 
 During my junior year at Cornell University, I created an optimized system.
 
