@@ -8,7 +8,7 @@ Most people at least flirt with the idea of creating a planner, schedule, or to-
 
 My first prototype to keep myself organized was a simple to-do list during finals week.
 
-![My Planning Prototype was a simple whiteboard with my classes weekly homework due days, my prelim schedule, and a section for tracking my workouts.](prototype.png "Planning Prototype")
+![My Planning Prototype was a simple whiteboard with my classes weekly homework due days, my prelim schedule, and a section for tracking my workouts.](/prototype.png "Planning Prototype")
 
 During my junior year at Cornell University, I created an optimized system.
 
@@ -24,15 +24,15 @@ As was natural to my work process, I decided to look at my life a week at a time
 
 The Global Assignment database houses all assignments that need to be completed throughout the semester. Each assignment has an associated name, class, due date, type, weekday, and status. Assignments are sorted by due date and status to push assignments that have upcoming due dates that have not yet been completed. This table-view of the database is present in all Week pages.
 
-![The Global Assignment database houses all assignments that need to be completed throughout the semester. Each assignment has an associated name, class, due date, type, weekday, and status. Assignments are sorted by due date and status to push assignments that have upcoming due dates that have not yet been completed. This table-view of the database is present in all Week pages.](Notion_Assignments.png "Global Assignment Database")
+![The Global Assignment database houses all assignments that need to be completed throughout the semester. Each assignment has an associated name, class, due date, type, weekday, and status. Assignments are sorted by due date and status to push assignments that have upcoming due dates that have not yet been completed. This table-view of the database is present in all Week pages.](/Notion_Assignments.png "Global Assignment Database")
 
 The Daily To-Do list allows me to specify which assignments or task I will complete each day throughout the week. It is also a change to remind me to keep good habits, like working out or study for classes.
 
-![The Daily To-Do list allows me to specify which assignments or task I will complete each day throughout the week. It is also a change to remind me to keep good habits, like working out or study for classes.](Notion_ToDo.png "Daily To-Do list")
+![The Daily To-Do list allows me to specify which assignments or task I will complete each day throughout the week. It is also a change to remind me to keep good habits, like working out or study for classes.](/Notion_ToDo.png "Daily To-Do list")
 
 My Weekly Schedule is a table that breaks each day of the week into 15-minute blocks. As I created my Week pages from a template, all my classes and repeat meetings are already placed into the table. The rest of the blocks can be filled out by myself as they happen or in an attempt to schedule for the future. Most of the time, the schedule was used to track my actions rather than to guide me throughout the day.
 
-![My Weekly Schedule is a table that breaks each day of the week into 15-minute blocks. As I created my Week pages from a template, all my classes and repeat meetings are already placed into the table. The rest of the blocks can be filled out by myself as they happen or in an attempt to schedule for the future.](Notion_Schedule.png "Time Schedule")
+![My Weekly Schedule is a table that breaks each day of the week into 15-minute blocks. As I created my Week pages from a template, all my classes and repeat meetings are already placed into the table. The rest of the blocks can be filled out by myself as they happen or in an attempt to schedule for the future.](/Notion_Schedule.png "Time Schedule")
 
 Luckily for me, Notion has a lot of export options for all of their data structures and pages. So at the end of the semester, I am able to export my Weekly Schedule into a CSV file for processing.
 
@@ -95,23 +95,23 @@ Two semesters were analyzed, Fall 2021 and Spring 2022, both occuring in my juni
 
 ### Fall 2021
 
-![](FA21_DAY.png "")
+![](/FA21_DAY.png "")
 
-![](FA21_WORK.png "")
+![](/FA21_WORK.png "")
 
-![](FA21_LIFE.png "")
+![](/FA21_LIFE.png "")
 
-![](FA21_longest_day.png "")
+![](/FA21_longest_day.png "")
 
-![](FA21_Level3.png "")
+![](/FA21_Level3.png "")
 
 ### Spring 2022
 
-![](SP22_DAY.png "Spring 2022 Average Day by Level One")
+![](/SP22_DAY.png "Spring 2022 Average Day by Level One")
 
-![](SP22_WORK.png "Spring 2022 Total Time of Work")
+![](/SP22_WORK.png "Spring 2022 Total Time of Work")
 
-![](SP22_LIFE.png "Spring 2022 Total Time of Life")
+![](/SP22_LIFE.png "Spring 2022 Total Time of Life")
 
 
 ## Life without My Schedule
