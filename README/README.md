@@ -8,7 +8,7 @@ Most people at least flirt with the idea of creating a planner, schedule, or to-
 
 My first prototype to keep myself organized was a simple to-do list during finals week.
 
-![My Planning Prototype was a simple whiteboard with my classes weekly homework due days, my prelim schedule, and a section for tracking my workouts.](./prototype.png "Planning Prototype")
+![My Planning Prototype was a simple whiteboard with my classes weekly homework due days, my prelim schedule, and a section for tracking my workouts.](/prototype.png "Planning Prototype")
 
 During my junior year at Cornell University, I created an optimized system.
 
@@ -95,24 +95,21 @@ Two semesters were analyzed, Fall 2021 and Spring 2022, both occuring in my juni
 
 ### Fall 2021
 
-![](/FA21_DAY.png "")
+![](/FA21_DAY.png "Fall 2021 Average Weekday")
 
-![](/FA21_WORK.png "")
+![](/FA21_WORK.png "Fall 2021 Total Time of Work")
 
-![](/FA21_LIFE.png "")
+![](/FA21_LIFE.png "Fall 2021 Total Time of Life")
 
-![](/FA21_longest_day.png "")
+![](/FA21_longest_day.png "Fall 2021 Longest Day")
 
-![](/FA21_Level3.png "")
+![](/FA21_Level3.png "Fall 2021 Three Class Breakdown")
 
 ### Spring 2022
 
-![](/SP22_DAY.png "Spring 2022 Average Day by Level One")
+![](/SP22_DAY.png "Spring 2022 Average Day")
 
 ![](/SP22_WORK.png "Spring 2022 Total Time of Work")
 
 ![](/SP22_LIFE.png "Spring 2022 Total Time of Life")
-
-
-## Life without My Schedule
 
