@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import ConnectionPatch
-import jsonRW
-import extra
+import src.jsonRW
+import src.extra
 from datetime import datetime
 
 
@@ -14,7 +14,7 @@ class Weeks:
         self.folder = folder
 
         # Defining json to hold Weeks data
-        json = jsonRW.read_json(folder)
+        json = src.jsonRW.read_json(folder)
         
         # Defining an empty list to hold strings that represent file locations
         weeks_files = []
@@ -34,11 +34,11 @@ class Weeks:
         for x in range(15):
             try:
                 df = pd.read_csv(weeks_files[x])
-                time = pd.DataFrame(extra.military_time())
+                time = pd.DataFrame(src.extra.military_time())
                 df = df.drop(df.columns[[0]], axis=1)
                 df = pd.concat([time, df], axis=1)
                 df.set_index([0])
-                df.replace(jsonRW.read_class_link(folder))
+                df.replace(src.jsonRW.read_class_link(folder))
                 self.weeks_df.append(df.fillna("Unknown"))
             except:
                 continue
@@ -50,7 +50,7 @@ class Weeks:
 
         # Three Nested For Loops to collect all action in a day, for each day, for each week
         for x in self.weeks_df:
-            for y in extra.week:
+            for y in src.extra.week:
                 for z in x[y]:
                     if actions.get(z) != None:
                         actions.update({z: (actions.get(z) + 1)})
@@ -58,7 +58,7 @@ class Weeks:
                         actions.update({z: 1})
 
         # Cleaning dictionary keys to translate from Notion hyperlinks to actual classes
-        classes = jsonRW.read_class_link(self.folder)
+        classes = src.jsonRW.read_class_link(self.folder)
         for x in classes:
             num = actions.get(x)
             actions.pop(x)
@@ -70,7 +70,7 @@ class Weeks:
             total_actions = total_actions + actions.get(x)
 
         analysis = {"actions":actions, "total_actions":total_actions}
-        jsonRW.write_analysis(self.folder, analysis)
+        src.jsonRW.write_analysis(self.folder, analysis)
 
     # I/O Function to do Level One classification
     def level_one(self):
@@ -80,7 +80,7 @@ class Weeks:
         work = []
         life = []
         food = []
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         for x in dict['analysis']['actions']:
             print("Action to categorize: " + x)
             l1_cat = input("Classification: ")
@@ -94,12 +94,12 @@ class Weeks:
                 if l1_cat == "f":
                     food.append(x)
         level_one = {"sleep":sleep, "work":work, "life":life, "food":food}
-        jsonRW.write_level(self.folder, "level_one", level_one)
+        src.jsonRW.write_level(self.folder, "level_one", level_one)
 
     # I/O Function to do Level Two classification
     def level_two(self, type):
         print(f"Level Two Classification: {type} \n When given an action, type category for it to be filed as.")
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         action_class = {}
         for x in dict['classification']['level_one'][type]:
             print("Action to classify: " + x)
@@ -113,12 +113,12 @@ class Weeks:
                 actions_list = [x]
                 action_class[classification] = actions_list
         level_two = {type:action_class}
-        jsonRW.write_level(self.folder, "level_two", level_two)
+        src.jsonRW.write_level(self.folder, "level_two", level_two)
 
     # I/O Function to do Level Three Classification
     def level_three(self):
         print("Level Three Classification")
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         level_two_work = dict['classification']['level_two']['work']
         work = {}
         for x in list(level_two_work.keys()):
@@ -138,11 +138,11 @@ class Weeks:
                     l3[classification] = actions_list
             work[x] = l3
         level_three = {"work": work}
-        jsonRW.write_level(self.folder, "level_three", level_three)
+        src.jsonRW.write_level(self.folder, "level_three", level_three)
 
 
     def analysis_one(self):
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         actions = dict['analysis']['actions']
         level_one = dict['classification']['level_one']
         text = []
@@ -158,10 +158,10 @@ class Weeks:
             data.append(count)
             time.append(f"{int(count // (4*7*num_weeks))} hours, {int(((count % (4*7*num_weeks))/(4*7*num_weeks))*(60))} minutes of {classify}")
         analysis = {"day": {"text": text, "data": data, "time": time}}
-        jsonRW.write_analysis(self.folder, analysis)
+        src.jsonRW.write_analysis(self.folder, analysis)
 
     def analysis_two(self):
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         actions = dict['analysis']['actions']
         level_two = dict['classification']['level_two']
         for worl in list(level_two.keys()):
@@ -177,10 +177,10 @@ class Weeks:
                 data.append(count)
                 time.append(f"{int(count // (4))} hours, {int(((count % (4))/(4))*(60))} minutes of {classify}")
             analysis = {worl: {"text": text, "data": data, "time": time}}
-            jsonRW.write_analysis(self.folder, analysis)
+            src.jsonRW.write_analysis(self.folder, analysis)
         
     def analysis_three(self):
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         actions = dict['analysis']['actions']
         level_three = dict['classification']['level_three']['work'] # this is currently hard-coded
         for lect in list(level_three.keys()):
@@ -196,7 +196,7 @@ class Weeks:
                 data.append(count)
                 time.append(f"{int(count // (4))} hours, {int(((count % (4))/(4))*(60))} minutes of {split}")
             analysis = {lect: {"text": text, "data": data, "time": time}}
-            jsonRW.write_analysis(self.folder, analysis)
+            src.jsonRW.write_analysis(self.folder, analysis)
 
     # [anno_pie(data, legend, title) produces a pie chart with a legend.  The pie chart percentages are based off of the numbers in [data].  [data]
     #   is a list of the number of hours spent on an action.  [legend] is a list of strings mapping the action hours to an action.  [title] is the
@@ -249,7 +249,7 @@ class Weeks:
 
 
     def bake_basic_pie(self):
-        dict = jsonRW.read_json(self.folder)
+        dict = src.jsonRW.read_json(self.folder)
         analysis = dict['analysis'] 
         for x in list(analysis.keys())[2:]:  # hard-coded to skip over 'actions' and 'total_actions'
             dict_data = analysis[x]
@@ -266,7 +266,7 @@ class Weeks:
 
 def average_week(weeks_list, empty):
     for x in weeks_list:
-        for y in extra.week:
+        for y in src.extra.week:
             for z in range(0, 96):
                 value = x.loc[z, y]
                 (empty.loc[z, y]).append(value)
@@ -280,7 +280,7 @@ def average_week(weeks_list, empty):
 
 def average_week_cat(weeks_list, empty, cat_dict):
     for x in weeks_list:
-        for y in extra.week:
+        for y in src.extra.week:
             for z in range(0, 96):
                 value = x.loc[z, y]
                 for w in cat_dict:
