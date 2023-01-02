@@ -1,28 +1,24 @@
-# Create T3 App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-## What's next? How do I make an app with this?
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+## Next Auth
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+### Google Provider Authentication
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+It appears that I need to configure credentials with Google to allow authentication through them.
 
-## Learn More
+Using Google Cloud Console, navigate to the APIs & Services section to create credentials.
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+You then are asked to configure the OAuth consent screen where you give your app name and other things.
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+After, you can go to the Credentials section and click Create OAuth client id. You will give it the url that will be requesting the authentication.
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+This will create a client ID and client secret that will be placed in the .env file in the Next JS app.
 
-## How do I deploy this?
+## Headless UI
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Included
+
+## SWR
+
+Included
