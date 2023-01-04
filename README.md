@@ -80,9 +80,9 @@ The real decision is how I am going to store 15-minute block and actions data. I
 
 #### Day Data
 
-| Date      | Era        | 00:00 | 00:15 |
-|-----------|------------|-------|-------|
-| 2021-8-23 | Semester 5 | Sleep | Sleep |
+| DateTime           | Era        | action |
+|--------------------|------------|--------|
+| 2021-8-23 13:15:00 | Semester 5 | Sleep  |
 
 
 A table like this might be used to deep the actual weekly data organized. Instead of having the string representation of the actions in the time block, a foreign key could be used.
@@ -110,6 +110,14 @@ Whenever new actions are added to the database, I need to be able to:
 ### Dashboard
 
 As the dashboard needs to display pie charts or other graphs, the database will need to have tables that hold the processed data so chart generation and not data processing is done when the user requests a chart.
+
+#### Ways to Analyze
+
+[x] Total Time Spend - The total hours and minutes spend on a given action or across a given level broken down at by classifications.
+
+[x] Average Time - The average time in a given day/week spend on a given action or across a given level broken down at by classification
+
+Time Spend over Time - The total hours and minutes spend on a given action, classification, or level over a set amount of time (day, week, month, semester)
 
 ## Backend
 
